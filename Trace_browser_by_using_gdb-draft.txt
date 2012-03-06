@@ -30,6 +30,9 @@ just set some break points and use continue command for now. Make
 sure the break points are not too close. Use backtrace command
 to show the call stack and print command to print the variables.
 
+You can get the least documentation from github by the following command.
+# git clone git://github.com/tsaicw/AndroidNativeCoding.git
+
 
 =====================================
   Simple way:
