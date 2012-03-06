@@ -1,0 +1,194 @@
+Table of Content:
+1. Prologue
+2. Simple way
+3. Launch gdb step by step
+4. Use cgdb: (cgdb is a curses-based interface to the GNU Debugger)
+5. Use eclipse
+6. gdb usages (commands)
+
+
+=====================================
+  Prologue:
+=====================================
+No matter what ways we use, we have to build the source codes at least
+once to get a nonstriped libwebcore.so. The nonstriped libwebcore.so
+contains the symbols informations that can be used to trace the
+libwebcore.so. If you have already built the sources before, and didn't
+modify the source codes of webkit, you can just run the following commands
+
+source build/envsetup.sh
+partner ...
+partner ...
+
+to get the environment ready.
+
+Because the native codes are executed in the multi-thread environment
+and the libwebcore.so contains a lot of symbol informations. It is
+easily crashed when debugging. Especially when we use step into, step over
+commands. I have no idea to deal with this difficulty now. Please
+just set some break points and use continue command for now. Make
+sure the break points are not too close. Use backtrace command
+to show the call stack and print command to print the variables.
+
+
+=====================================
+  Simple way:
+=====================================
+1. Launch the browser in the device.
+
+2. Connect the gdb to the device by the following command.
+   # gdbclient app_process :5039 browser
+
+3. Use the gdb to set breakpoint and trace the libwebcore.so.
+
+
+=====================================
+  Launch gdb step by step:
+=====================================
+
+1. Replace the [ANDROID_PRODUCT_OUT] in gdbclient.cmds by the android out path.
+   Ex.
+      Replace
+        set solib-absolute-prefix [ANDROID_PRODUCT_OUT]/symbols
+        set solib-search-path [ANDROID_PRODUCT_OUT]/symbols/system/lib
+      by
+        set solib-absolute-prefix /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols
+        set solib-search-path /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols/system/lib
+
+2. Launch the browser in the device.
+
+3. Find the PID of browser.
+   # adb shell ps | grep browser
+   app_115   29540 1397  182996 50596 ffffffff afd0c96c S com.android.browser
+                 ^
+              PID
+
+4. Launch the gdbserver and attach it to the browser process at the device.
+   # adb shell gdbserver :5039 --attach [PID] &
+                                                ^
+                                  29540 in this example
+
+5. Forward the local tcp port to the device.
+   # adb forward tcp:5039 tcp:5039
+
+6. Launch the gdb.
+   # arm-linux-androideabi-gdb -x gdbclient.cmds $ANDROID_PRODUCT_OUT/symbols/system/bin/app_process :5039
+
+7. Use the gdb to set breakpoint and trace the libwebcore.so.
+
+
+=============================================================================
+  Use cgdb: (cgdb is a curses-based interface to the GNU Debugger)
+=============================================================================
+1. Install the cgdb.
+   # sudo app-get install cgdb
+
+2. Launch gdb step by step: 1 ~ 5.
+
+3. Launch the cgdb.
+   # cgdb -d arm-linux-androideabi-gdb -- -x gdbclient.cmds $ANDROID_PRODUCT_OUT/symbols/system/bin/app_process :5039
+
+4. Use the gdb to set breakpoint and trace the libwebcore.so.
+
+
+=====================
+  Use eclipse:
+=====================
+1. Replace the [ANDROID_PRODUCT_OUT] in gdbeclipse.cmds by the android out path.
+   Ex.
+      Replace
+        set solib-absolute-prefix [ANDROID_PRODUCT_OUT]/symbols
+        set solib-search-path [ANDROID_PRODUCT_OUT]/symbols/system/lib
+      by
+        set solib-absolute-prefix /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols
+        set solib-search-path /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols/system/lib
+
+2. Launch gdb step by step: 2 ~ 5.
+
+3. Please make sure the CDT had already been installed in the eclipse.
+   Click File -> New -> Project...
+   Choose "Makefile Project with Existing Code" under C/C++ folder to create a project contains the webkit source codes.
+
+   In the "Import Existing Code" page.
+   Choose the [ANDROID_ROOT]/external/webkit in the Existing Code Location field.
+   Ex. 
+      /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/external/webkit
+      in this example.
+
+   Choose <none> in the "Toolchain for Indexer Settings".
+   Click Finish.
+
+3. Click Run -> Debug Configurations...
+
+4. In the Debug Configurations dialog. Right click mouse at C/C++ Remote Application and create a new item.
+
+5. In this new created item, click the Main tab.
+   Choose the [ANDROID_PRODUCT_OUT]/symbols/system/bin/app_process in the "C/C++ Application:" option.
+   Ex.
+      /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols/system/bin/app_process
+      in this example.
+
+   Choose the new created project in the "Project:" field.
+   Click the "Disable auto build" radio button.
+
+6. Click the Debugger tab and click the Main subtab.
+   Choose the [ANDROID_TOOLCHAIN]/arm-linux-androideabi-gdb in the "GDB debugger:" option.
+   Ex.
+      /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-gdb
+      in this example.
+
+   Choose the gdbeclipse.cmds in the "GDB command file:" option.
+
+7. Click the Debugger tab and click the Connection subtab.
+   Fill in 5039 in the "Port number:" field.
+
+8. Click the Apply button. Then click Debug.
+
+9. Chick the Proceed button when an "Error in Workspace" dialog display.
+
+10. Switch to the Debug perspective and start to debug.
+
+
+=====================================
+  gdb usages (commands):
+=====================================
+quit (q) - quit gdb
+
+break (b) - set breakpoint
+Ex.
+   set breakpoint by function name
+     break WebCoreFrameBridge.cpp: CreateFrame
+   set breakpoint by line number
+     break FrameLoader.cpp: 1380
+
+list (l) - list the source codes
+Ex.
+   list by function name
+     list WebCoreFrameBridge.cpp: CreateFrame
+   list by line number
+     list FrameLoader.cpp: 1380
+
+continue (c) - continue the program
+
+step (s) - step into
+next (n) - step over
+finish   - step return
+
+print (p) - print the variable's value
+Ex.
+    print var_a
+
+set variable - set a variable's value
+Ex.
+    set variable var_a=100
+
+backtrace - show the call stack
+where - same as backtrace
+
+whatis - show a variable's type
+
+ptype - show a type's definition
+
+help (h) - help informations
+
+

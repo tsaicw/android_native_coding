@@ -1,0 +1,3 @@
+set solib-absolute-prefix [ANDROID_PRODUCT_OUT]/symbols
+set solib-search-path [ANDROID_PRODUCT_OUT]/symbols/system/lib
+
