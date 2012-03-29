@@ -31,7 +31,7 @@ sure the break points are not too close. Use backtrace command
 to show the call stack and print command to print the variables.
 
 You can get the least documentation from github by the following command.
-# git clone git://github.com/tsaicw/AndroidNativeCoding.git
+# git clone git://github.com/tsaicw/android_native_coding.git
 
 
 =====================================
@@ -121,11 +121,11 @@ You can get the least documentation from github by the following command.
    Choose <none> in the "Toolchain for Indexer Settings".
    Click Finish.
 
-3. Click Run -> Debug Configurations...
+4. Click Run -> Debug Configurations...
 
-4. In the Debug Configurations dialog. Right click mouse at C/C++ Remote Application and create a new item.
+5. In the Debug Configurations dialog. Right click mouse at C/C++ Remote Application and create a new item.
 
-5. In this new created item, click the Main tab.
+6. In this new created item, click the Main tab.
    Choose the [ANDROID_PRODUCT_OUT]/symbols/system/bin/app_process in the "C/C++ Application:" option.
    Ex.
       /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/out/target/product/express/symbols/system/bin/app_process
@@ -134,7 +134,7 @@ You can get the least documentation from github by the following command.
    Choose the new created project in the "Project:" field.
    Click the "Disable auto build" radio button.
 
-6. Click the Debugger tab and click the Main subtab.
+7. Click the Debugger tab and click the Main subtab.
    Choose the [ANDROID_TOOLCHAIN]/arm-linux-androideabi-gdb in the "GDB debugger:" option.
    Ex.
       /home/tsaicw/workspace/hep_sources/Express_Sprint_WWE_HC_MR/prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-gdb
@@ -142,14 +142,14 @@ You can get the least documentation from github by the following command.
 
    Choose the gdbeclipse.cmds in the "GDB command file:" option.
 
-7. Click the Debugger tab and click the Connection subtab.
+8. Click the Debugger tab and click the Connection subtab.
    Fill in 5039 in the "Port number:" field.
 
-8. Click the Apply button. Then click Debug.
+9. Click the Apply button. Then click Debug.
 
-9. Chick the Proceed button when an "Error in Workspace" dialog display.
+10. Chick the Proceed button when an "Error in Workspace" dialog display.
 
-10. Switch to the Debug perspective and start to debug.
+11. Switch to the Debug perspective and start to debug.
 
 
 =====================================
